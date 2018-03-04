@@ -1,0 +1,107 @@
+---
+- name: Installation nginx
+  include_role:
+    name: role-nginx
+
+# include role nginx...
+- name: Fichier pour nginx
+  become: yes
+  template:
+    src: "{{ item.cle }}"
+    dest: "{{ item.valeur }}"
+  with_items:
+    - { "cle" : "nginx-odoo.conf.j2", "valeur" : "{{ in_odoo['nginx_available_conf'] }}" }
+    - { "cle" : "nginx.conf.j2", "valeur" : "/etc/nginx/nginx.conf" }
+    - { "cle" : "odoo-odoo.conf.j2", "valeur" : "/etc/odoo/odoo.conf" }
+  notify:
+    - Reload nginx
+  tags:
+    - odoo
+
+# GENERATE CERTIFICATE in ansible 2.3
+- name: "nginx-odoo generate key"
+  become: yes
+  openssl_privatekey:
+    path: "{{ item }}"
+  with_items:
+    - "{{ in_odoo['nginx_ssl_key'] }}"
+    - "{{ in_odoo_web['nginx_ssl_key'] }}"
+  notify:
+    - Reload nginx
+  tags:
+    - odoo
+    - ssl
+
+# NEW in version 2.4
+# need pyOpenSSL >= 0.15
+#- name: "nginx-odoo generate certificates"
+#  become: yes
+#  openssl_csr:
+#    #path: "{{ in_odoo['nginx_ssl_crt'] }}"
+#    #privatekey_path: "{{ in_odoo['nginx_ssl_key'] }}"
+#    #common_name: "{{ in_odoo['dns_name'] }}"
+#    path: "{{ item.cert }}"
+#    privatekey_path: "{{ item.cle }}"
+#    common_name: "{{ item.cname }}"
+#  with_items:
+#    - { "cle" : "{{ in_odoo['nginx_ssl_key'] }}", "cert" : "{{ in_odoo['nginx_ssl_crt'] }}", "cname" : "{{ in_odoo['dns_name'] }}" }
+#    - { "cle" : "{{ in_odoo_web['nginx_ssl_key'] }}", "cert" : "{{ in_odoo_web['nginx_ssl_crt'] }}", "cname" : "{{ in_odoo_web['dns_name'] }}" }
+#  notify:
+#    - Reload nginx
+#  tags:
+#    - odoo
+#    - ssl
+
+
+- name: "Activate nginx-odoo conf"
+  become: yes
+  file:
+    src: "{{ in_odoo['nginx_available_conf'] }}"
+    path: "{{ in_odoo['nginx_enabled_conf'] }}"
+    state: link
+  notify:
+    - Reload nginx
+  tags:
+    - odoo
+
+- name: Convertisseur pdf - wget
+  get_url:
+    url: "{{ in_odoo['url_html2pdf'] }}"
+    dest: "{{ in_odoo['wkhtlktox'] }}"
+    validate_certs: no
+    mode: 0440
+  tags:
+    - odoo
+    - pdfconvert
+
+- name: Convertisseur pdf - unarchive
+  unarchive:
+    remote_src: yes
+    src: "{{ in_odoo['wkhtlktox'] }}"
+    dest: "/tmp"
+  tags:
+    - odoo
+    - pdfconvert
+
+- name: Convertisseur pdf - copie binaire
+  become: yes
+  copy:
+    remote_src: yes
+    dest: /usr/bin
+    src:  "/tmp/wkhtmltox/bin/{{ item }}"
+  with_items:
+    - wkhtmltopdf
+    - wkhtmltoimage
+  tags:
+    - odoo
+    - pdfconvert
+
+- name: Debug vars odoo
+  debug:
+    var: {{ item }}
+  with_items:
+    - in_odoo
+    - in_odoo_web
+  tags:
+    - debug
+    - always

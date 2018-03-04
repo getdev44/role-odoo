@@ -1,0 +1,57 @@
+---
+#$ sudo yum install -y epel-release
+- name: "Install EPEL release"
+  become: yes
+  yum:
+    name: "epel-release"
+    state: present
+  tags:
+    - odoo
+    - odoo_pre
+
+- name: "Prepare odoo install"
+  become: yes
+  yum:
+    name: "{{ item.cle }}"
+    state: present
+  with_items:
+    - "{{ in_odoo.packages }}"
+  tags:
+    - odoo
+    - odoo_pre
+
+#$ sudo yum-config-manager --add-repo=https://nightly.odoo.com/10.0/nightly/rpm/odoo.repo
+- name: "Add repo"
+  become: yes
+  yum_repository:
+    name: "odoo"
+    description: "odoo repository"
+    baseurl: "https://nightly.odoo.com/10.0/nightly/rpm/"
+    gpgkey: "https://nightly.odoo.com/odoo.key"
+    gpgcheck: yes
+  tags:
+    - odoo
+    - odoo_pre
+
+#$ sudo yum install -y odoo
+- name: "Install odoo"
+  become: yes
+  yum:
+    name: "odoo"
+    state: present
+  tags:
+    - odoo
+    - odoo_inst
+
+#$ sudo systemctl enable odoo
+#$ sudo systemctl start odoo
+- name: "Enable odoo"
+  become: yes
+  systemd:
+    name: odoo
+    state: started
+    enabled: yes
+  tags:
+    - odoo
+    - odoo_inst
+
