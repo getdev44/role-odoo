@@ -1,4 +1,4 @@
---
+---
 # On ne doit pas garder les mots de passe par defaut
 odoo_pass:
   admin: "pass"
