@@ -15,8 +15,6 @@
     - { "cle" : "odoo-odoo.conf.j2", "valeur" : "/etc/odoo/odoo.conf" }
   notify:
     - Reload nginx
-  tags:
-    - odoo
 
 # GENERATE CERTIFICATE in ansible 2.3
 - name: "nginx-odoo generate key"
@@ -28,9 +26,6 @@
     - "{{ in_odoo_web['nginx_ssl_key'] }}"
   notify:
     - Reload nginx
-  tags:
-    - odoo
-    - ssl
 
 # NEW in version 2.4
 # need pyOpenSSL >= 0.15
@@ -61,8 +56,6 @@
     state: link
   notify:
     - Reload nginx
-  tags:
-    - odoo
 
 - name: Convertisseur pdf - wget
   get_url:
@@ -70,18 +63,12 @@
     dest: "{{ in_odoo['wkhtlktox'] }}"
     validate_certs: no
     mode: 0440
-  tags:
-    - odoo
-    - pdfconvert
 
 - name: Convertisseur pdf - unarchive
   unarchive:
     remote_src: yes
     src: "{{ in_odoo['wkhtlktox'] }}"
     dest: "/tmp"
-  tags:
-    - odoo
-    - pdfconvert
 
 - name: Convertisseur pdf - copie binaire
   become: yes
@@ -92,16 +79,10 @@
   with_items:
     - wkhtmltopdf
     - wkhtmltoimage
-  tags:
-    - odoo
-    - pdfconvert
 
-- name: Debug vars odoo
-  debug:
-    var: {{ item }}
-  with_items:
-    - in_odoo
-    - in_odoo_web
-  tags:
-    - debug
-    - always
+#- name: Debug vars odoo
+#  debug:
+#    var: {{ item }}
+#  with_items:
+#    - in_odoo
+#    - in_odoo_web

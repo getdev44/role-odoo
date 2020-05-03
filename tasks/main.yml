@@ -4,24 +4,18 @@
     in_odoo: "{{ in_odoo|default({})|combine({item.key : item.value}, recursive=True) }}"
   with_dict: "{{ odoo }}"
   when: odoo is defined
-  tags:
-    - always
 
 - name: Combinaison des dictionnaires odoo-web
   set_fact:
     in_odoo_web: "{{ in_odoo_web|default({})|combine({item.key : item.value}, recursive=True) }}"
   with_dict: "{{ odoo_web }}"
   when: odoo_web is defined
-  tags:
-    - always
 
 - name: Combinaison des dictionnaires
   set_fact:
     in_odoo_web: "{{ in_odoo_web|default({})|combine({item.key : item.value}, recursive=True) }}"
   with_dict: "{{ odoo_web }}"
   when: odoo_web is defined
-  tags:
-    - always
 
 - name: Debug vars odoo
   debug:
@@ -29,9 +23,6 @@
   with_items:
     - in_odoo
     - in_odoo_web
-  tags:
-    - debug
-    - always
 
 
 - name: Installation odoo

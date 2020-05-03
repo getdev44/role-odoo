@@ -16,7 +16,7 @@ galaxy_info:
   # - CC-BY
   license: "GPL"
 
-  min_ansible_version: "2.2"
+  min_ansible_version: "2.7"
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -32,9 +32,9 @@ galaxy_info:
   #
   # platforms is a list of platforms, and each platform has a name and a list of versions.
   #
-  # platforms:
-  # - name: centos
-  #   - 7
+  platforms:
+  - name: centos
+    - 7
   # - name: Fedora
   #   versions:
   #   - all
@@ -60,3 +60,7 @@ dependencies:
   #{%- for dependency in dependencies %}
   #- {{ dependency }}
   #{%- endfor %}
+  - src: https://github.com/getdev44/role-nginx.git
+    scm: git
+    version: 2.0.1
+    name: role-nginx

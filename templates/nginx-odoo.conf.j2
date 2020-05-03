@@ -9,16 +9,16 @@ upstream odoochat {
 # http -> https
 server {
    listen 80;
-   #server_name odoo.vps365593.ovh.net;
-   #server_name vps365593.ovh.net;
+   #server_name odoo.example.com;
+   #server_name example.com;
    server_name {{ odoo['dns_name'] }};
    rewrite ^(.*) https://$host$1 permanent;
 }
 
 server {
  listen 443;
- #server_name odoo.vps365593.ovh.net;
- #server_name vps365593.ovh.net;
+ #server_name odoo.example.com;
+ #server_name example.com;
  server_name {{ odoo['dns_name'] }};
  proxy_read_timeout 720s;
  proxy_connect_timeout 720s;
