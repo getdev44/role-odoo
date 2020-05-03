@@ -52,3 +52,13 @@ in_odoo_web:
 ```
 
 ## Usage
+
+In a playbook, include this role in galaxy file and then :
+```
+- name: "Installing odoo"
+  hosts: odoo
+  become: yes
+  tasks:
+  - include_role:
+      name: role-odoo
+```

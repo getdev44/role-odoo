@@ -5,7 +5,6 @@
 
 # include role nginx...
 - name: Fichier pour nginx
-  become: yes
   template:
     src: "{{ item.cle }}"
     dest: "{{ item.valeur }}"
@@ -24,7 +23,6 @@
 
 # GENERATE CERTIFICATE in ansible 2.3
 - name: "nginx-odoo generate key"
-  become: yes
   openssl_privatekey:
     path: "{{ item }}"
   with_items:
@@ -36,7 +34,6 @@
 # NEW in version 2.4
 # need pyOpenSSL >= 0.15
 #- name: "nginx-odoo generate certificates"
-#  become: yes
 #  openssl_csr:
 #    #path: "{{ in_odoo['nginx_ssl_crt'] }}"
 #    #privatekey_path: "{{ in_odoo['nginx_ssl_key'] }}"
@@ -55,7 +52,6 @@
 
 
 - name: "Activate nginx-odoo conf"
-  become: yes
   file:
     src: "{{ in_odoo['nginx_available_conf'] }}"
     path: "{{ in_odoo['nginx_enabled_conf'] }}"
@@ -77,7 +73,6 @@
     dest: "/tmp"
 
 - name: Convertisseur pdf - copie binaire
-  become: yes
   copy:
     remote_src: yes
     dest: /usr/bin
