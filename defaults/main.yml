@@ -1,7 +1,9 @@
 ---
 # On ne doit pas garder les mots de passe par defaut
 odoo_pass:
-  admin: "pass"
+  #admin: "pass"
+
+################################
 in_odoo:
   conf:
     db:
@@ -12,11 +14,17 @@ in_odoo:
   dns_name: odoo.exemple.com
   nginx_available_conf: /etc/nginx/sites-available/odoo.conf
   nginx_enabled_conf: /etc/nginx/sites-enabled/odoo.conf
-  nginx_ssl_key: /etc/ssl/nginx/odoo.key
-  nginx_ssl_crt: /etc/ssl/nginx/odoo.crt
+  nginx_ssl:
+    dir: '/etc/ssl/nginx'
+    key: 'odoo.key'
+    crt: 'odoo.crt'
+  #nginx_ssl_key: /etc/ssl/nginx/odoo.key
+  #nginx_ssl_crt: /etc/ssl/nginx/odoo.crt
   url_html2pdf: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
   wkhtlktox: /tmp/wkhtlktox.tar.xz
   packages:
+
+###############################
 in_odoo_web:
 # Copier ses lignes dans l'inventory, sinon elles ne sont pas prise en compte
 #  packages:
@@ -24,6 +32,6 @@ in_odoo_web:
 #  dns_name: odoo.exemple.com
   nginx_available_conf: /etc/nginx/sites-available/odoo-web.conf
   nginx_enabled_conf: /etc/nginx/sites-enabled/odoo-web.conf
-  nginx_ssl_key: /etc/ssl/nginx/odoo-web.key
-  nginx_ssl_crt: /etc/ssl/nginx/odoo-web.crt
+  nginx_ssl_key: "{{in_odoo['nginx_ssl']['dir'] }}/odoo-web.key"
+  nginx_ssl_crt: "{{in_odoo['nginx_ssl']['dir'] }}/odoo-web.crt"
   dns_name: 

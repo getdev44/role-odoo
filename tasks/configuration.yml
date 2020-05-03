@@ -16,13 +16,19 @@
   notify:
     - Reload nginx
 
+- name: 'Create ssl directory'
+  file:
+    state: 'directory'
+    path: "{{ in_odoo['nginx_ssl']['dir'] }}"
+    mode: '0755'
+
 # GENERATE CERTIFICATE in ansible 2.3
 - name: "nginx-odoo generate key"
   become: yes
   openssl_privatekey:
     path: "{{ item }}"
   with_items:
-    - "{{ in_odoo['nginx_ssl_key'] }}"
+    - "{{ in_odoo['nginx_ssl']['key'] }}"
     - "{{ in_odoo_web['nginx_ssl_key'] }}"
   notify:
     - Reload nginx
