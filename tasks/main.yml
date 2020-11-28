@@ -5,12 +5,6 @@
   with_dict: "{{ odoo }}"
   when: odoo is defined
 
-- name: Combinaison des dictionnaires odoo-web
-  set_fact:
-    in_odoo_web: "{{ in_odoo_web|default({})|combine({item.key : item.value}, recursive=True) }}"
-  with_dict: "{{ odoo_web }}"
-  when: odoo_web is defined
-
 - name: Combinaison des dictionnaires
   set_fact:
     in_odoo_web: "{{ in_odoo_web|default({})|combine({item.key : item.value}, recursive=True) }}"

@@ -33,22 +33,39 @@
 
 # NEW in version 2.4
 # need pyOpenSSL >= 0.15
-#- name: "nginx-odoo generate certificates"
-#  openssl_csr:
-#    #path: "{{ in_odoo['nginx_ssl_crt'] }}"
-#    #privatekey_path: "{{ in_odoo['nginx_ssl_key'] }}"
-#    #common_name: "{{ in_odoo['dns_name'] }}"
-#    path: "{{ item.cert }}"
-#    privatekey_path: "{{ item.cle }}"
-#    common_name: "{{ item.cname }}"
-#  with_items:
-#    - { "cle" : "{{ in_odoo['nginx_ssl_key'] }}", "cert" : "{{ in_odoo['nginx_ssl_crt'] }}", "cname" : "{{ in_odoo['dns_name'] }}" }
-#    - { "cle" : "{{ in_odoo_web['nginx_ssl_key'] }}", "cert" : "{{ in_odoo_web['nginx_ssl_crt'] }}", "cname" : "{{ in_odoo_web['dns_name'] }}" }
-#  notify:
-#    - Reload nginx
-#  tags:
-#    - odoo
-#    - ssl
+- name: "nginx-odoo generate certificates"
+  block:
+  - vars:
+      csr_file: "{{ in_odoo['nginx_ssl']['dir'] }}/{{ in_odoo['nginx_ssl']['csr'] }}"
+      key_file: "{{ in_odoo['nginx_ssl']['dir'] }}/{{ in_odoo['nginx_ssl']['key'] }}"
+      crt_file: "{{ in_odoo['nginx_ssl']['dir'] }}/{{ in_odoo['nginx_ssl']['crt'] }}"
+  - name: 'Generate csr'
+    openssl_csr:
+      path: "{{ csr_file }}"
+      privatekey_path: "{{ key_file }}"
+      common_name: "{{ in_odoo['dns_name'] }}"
+      #path: "{{ item.cert }}"
+      #privatekey_path: "{{ item.cle }}"
+      #common_name: "{{ item.cname }}"
+      organization_name: "{{ ( in_odoo['csr'] | default({}) )['organization_name'] | default(omit) }}"
+      email_address: "{{ ( in_odoo['csr'] | default({}) )[''email_address] | default(omit) }}"
+      country: "{{ ( in_odoo['csr'] | default({}) )[''country] | default(omit) }}"
+  
+    #with_items:
+    #  - { "cle" : "{{ in_odoo['nginx_ssl_key'] }}", "cert" : "{{ in_odoo['nginx_ssl_crt'] }}", "cname" : "{{ in_odoo['dns_name'] }}" }
+    #  - { "cle" : "{{ in_odoo_web['nginx_ssl_key'] }}", "cert" : "{{ in_odoo_web['nginx_ssl_crt'] }}", "cname" : "{{ in_odoo_web['dns_name'] }}" }
+  - name: 'letsencrypt request'
+    acme_certificate:
+      account_key_src: "{{ key_file }}"
+      csr: "{{ csr_file }}"
+      dest: "{{ crt_file }}"
+      acme_directory: "{{ in_odoo['acme']"
+    register: cert_challenge
+  notify:
+    - Reload nginx
+  tags:
+    - odoo
+    - ssl
 
 
 - name: "Activate nginx-odoo conf"

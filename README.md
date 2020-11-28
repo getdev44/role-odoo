@@ -36,6 +36,12 @@ in_odoo:
   url_html2pdf: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
   wkhtlktox: /tmp/wkhtlktox.tar.xz
   packages:
+  # Optionnal : liste of information for requesting a certificate
+  csr:
+    country: 'FR'
+    organization_name: Ansible
+    email_address: user@example.com
+  acme: 'https://acme-staging-v02.api.letsencrypt.org/directory' # OPTIONNAL : if not set use production letsencrypt
 ```
 
 ```

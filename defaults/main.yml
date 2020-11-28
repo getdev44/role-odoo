@@ -12,12 +12,16 @@ in_odoo:
 #  packages:
 #    - { "cle" : "yum-utils", "version" : "1.1.31-40.el7.noarch" }
   dns_name: odoo.exemple.com
+  #csr:
+  #  country: 'FR'
+    
   nginx_available_conf: /etc/nginx/sites-available/odoo.conf
   nginx_enabled_conf: /etc/nginx/sites-enabled/odoo.conf
   nginx_ssl:
     dir: '/etc/ssl/nginx'
     key: 'odoo.key'
     crt: 'odoo.crt'
+    csr: 'odoo.csr'
   #nginx_ssl_key: /etc/ssl/nginx/odoo.key
   #nginx_ssl_crt: /etc/ssl/nginx/odoo.crt
   url_html2pdf: https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
